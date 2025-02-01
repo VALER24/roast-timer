@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roast Tracker</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            padding: 20px; 
+            background-color: black;
+        }
+        .container { 
+            max-width: 400px; 
+            margin: auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .phase { 
+            margin: 15px 0; 
+            font-size: 18px;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f0f0f0;
+        }
+        button { 
+            padding: 12px; 
+            margin: 5px; 
+            font-size: 16px; 
+            width: 100%; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:nth-child(1) { background: #4CAF50; color: white; }
+        button:nth-child(2) { background: #FF9800; color: white; }
+        button:nth-child(3) { background: #F44336; color: white; }
+        button:nth-child(4) { background: #607D8B; color: white; }
+        button:hover { opacity: 0.8; }
+        #totalTime { 
+            margin-top: 20px; 
+            font-size: 20px; 
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Roast Tracker</h2>
+        <button onclick="startRoast()">Start</button>
+        <button onclick="startMaillard()">Maillard</button>
+        <button onclick="startDevelopment()">Development</button>
+        <button onclick="stopRoast()">Stop</button>
+        
+        <div class="phase" id="dry">Dry Phase: <span id="dryTime">00:00</span> | <span id="dryPercent">0%</span></div>
+        <div class="phase" id="maillard">Maillard Phase: <span id="maillardTime">00:00</span> | <span id="maillardPercent">0%</span></div>
+        <div class="phase" id="development">Development Phase: <span id="developmentTime">00:00</span> | <span id="developmentPercent">0%</span></div>
+        
+        <div id="totalTime">Total Time: 00:00</div>
+    </div>
+    
+    <script>
+        let totalTime = 0, dryTime = 0, maillardTime = 0, developmentTime = 0;
+        let interval;
+        let currentPhase = 'dry';
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function updateTimes() {
+            totalTime++;
+            if (currentPhase === 'dry') dryTime++;
+            else if (currentPhase === 'maillard') maillardTime++;
+            else if (currentPhase === 'development') developmentTime++;
+            
+            document.getElementById('dryTime').innerText = formatTime(dryTime);
+            document.getElementById('maillardTime').innerText = formatTime(maillardTime);
+            document.getElementById('developmentTime').innerText = formatTime(developmentTime);
+            document.getElementById('totalTime').innerText = `Total Time: ${formatTime(totalTime)}`;
+
+            let dryPercent = (dryTime / totalTime * 100).toFixed(1);
+            let maillardPercent = (maillardTime / totalTime * 100).toFixed(1);
+            let developmentPercent = (developmentTime / totalTime * 100).toFixed(1);
+
+            document.getElementById('dryPercent').innerText = dryPercent + "%";
+            document.getElementById('maillardPercent').innerText = maillardPercent + "%";
+            document.getElementById('developmentPercent').innerText = developmentPercent + "%";
+        }
+
+        function startRoast() {
+            stopRoast();
+            currentPhase = 'dry';
+            interval = setInterval(updateTimes, 1000);
+        }
+
+        function startMaillard() {
+            currentPhase = 'maillard';
+        }
+
+        function startDevelopment() {
+            currentPhase = 'development';
+        }
+
+        function stopRoast() {
+            clearInterval(interval);
+        }
+    </script>
+</body>
+</html>
